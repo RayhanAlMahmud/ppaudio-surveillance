@@ -1,7 +1,7 @@
 # enroll.py  (dual backend: cosine | plda)
 import os
 os.environ.setdefault("HF_HUB_OFFLINE", "1")   # always use local cache
-
+os.environ.setdefault("SPEECHBRAIN_LOCAL_DOWNLOAD_STRATEGY", "copy")  # avoid symlinks on Windows
 import argparse
 import json
 from pathlib import Path
@@ -17,10 +17,11 @@ ART = BASE / "artifacts"
 ART.mkdir(parents=True, exist_ok=True)
 
 encoder = EncoderClassifier.from_hparams(
-    source="speechbrain/spkrec-ecapa-voxceleb",
-     savedir=str(ARTIFACTS / "ecapa-voxceleb"),
+      source=str((ART if 'ART' in globals() else (Path(__file__).resolve().parent / "artifacts")) / "ecapa-voxceleb"),
+    savedir=str((ART if 'ART' in globals() else (Path(__file__).resolve().parent / "artifacts")) / "ecapa-voxceleb"),
     run_opts={"device": "cuda" if torch.cuda.is_available() else "cpu"}
 )
+
 
 def load_audio_16k(p: Path, target_sr: int = 16000) -> np.ndarray:
     y, sr = librosa.load(p, sr=None, mono=True)

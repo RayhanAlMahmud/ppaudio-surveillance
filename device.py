@@ -1,18 +1,20 @@
 import os
 os.environ.setdefault("HF_HUB_OFFLINE", "1")  # always use local HF cache
+os.environ.setdefault("SPEECHBRAIN_LOCAL_DOWNLOAD_STRATEGY", "copy")  # avoid symlinks on Windows
 
 import json, numpy as np, librosa, torch, argparse
 from pathlib import Path
 from speechbrain.pretrained import EncoderClassifier
 
 BASE = Path(__file__).resolve().parent
-ARTIFACTS = BASE / "artifacts"
+ART = BASE / "artifacts"
 PROBES = BASE / "data" / "probes"
 
 encoder = EncoderClassifier.from_hparams(
-    source="speechbrain/spkrec-ecapa-voxceleb",
-     savedir=str(ARTIFACTS / "ecapa-voxceleb"),
+     source=str((ART if 'ART' in globals() else (Path(__file__).resolve().parent / "artifacts")) / "ecapa-voxceleb"),
+    savedir=str((ART if 'ART' in globals() else (Path(__file__).resolve().parent / "artifacts")) / "ecapa-voxceleb"),
     run_opts={"device": "cuda" if torch.cuda.is_available() else "cpu"}
+)
 )
 
 def load_audio_16k(path, target_sr=16000):
