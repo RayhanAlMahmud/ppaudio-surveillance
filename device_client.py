@@ -1,5 +1,7 @@
 import os
 os.environ.setdefault("HF_HUB_OFFLINE", "1")   # always use local cache
+os.environ.setdefault("SPEECHBRAIN_LOCAL_DOWNLOAD_STRATEGY", "copy")  # avoid symlinks on Windows
+
 import json, random, argparse, requests
 from pathlib import Path
 import numpy as np
@@ -7,14 +9,15 @@ import librosa, torch
 from speechbrain.inference import EncoderClassifier
 from phe import paillier
 import sys
-import torch
 
 BASE = Path(__file__).resolve().parent
 ARTIFACTS = BASE / "artifacts"
+
 # ----------------- audio / embeddings -----------------
 # Load pretrained speaker encoder (ECAPA)
 encoder = EncoderClassifier.from_hparams(
-    source="speechbrain/spkrec-ecapa-voxceleb",
+     source=str(ARTIFACTS / "ecapa-voxceleb"),
+     savedir=str(ARTIFACTS / "ecapa-voxceleb"),
     run_opts={"device": "cuda" if torch.cuda.is_available() else "cpu"}
 )
 

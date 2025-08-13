@@ -1,15 +1,23 @@
+
+
 # enroll.py  (dual backend: cosine | plda)
 import os
 os.environ.setdefault("HF_HUB_OFFLINE", "1")   # always use local cache
 os.environ.setdefault("SPEECHBRAIN_LOCAL_DOWNLOAD_STRATEGY", "copy")  # avoid symlinks on Windows
+
 import argparse
 import json
 from pathlib import Path
-
+import torchaudio, soundfile
 import librosa
 import numpy as np
-import torch
+import torch, speechbrain
 from speechbrain.inference import EncoderClassifier
+print("torch:", torch.__version__)
+print("torchaudio:", torchaudio.__version__)
+
+print("librosa OK:", hasattr(librosa, "load"))
+print("speechbrain OK:", hasattr(speechbrain, "__version__"))
 
 BASE = Path(__file__).resolve().parent
 DATA = BASE / "data" / "suspects"
@@ -21,6 +29,10 @@ encoder = EncoderClassifier.from_hparams(
     savedir=str((ART if 'ART' in globals() else (Path(__file__).resolve().parent / "artifacts")) / "ecapa-voxceleb"),
     run_opts={"device": "cuda" if torch.cuda.is_available() else "cpu"}
 )
+
+print("Model dir:", ART / "ecapa-voxceleb")
+print("HF_HUB_OFFLINE =", os.environ.get("HF_HUB_OFFLINE"))
+print("SB_STRATEGY    =", os.environ.get("SPEECHBRAIN_LOCAL_DOWNLOAD_STRATEGY"))
 
 
 def load_audio_16k(p: Path, target_sr: int = 16000) -> np.ndarray:

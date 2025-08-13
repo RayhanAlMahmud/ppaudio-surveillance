@@ -1,6 +1,8 @@
 # train_plda_simplified.py
 import os
 os.environ.setdefault("HF_HUB_OFFLINE", "1")  # always use local HF cache
+os.environ.setdefault("SPEECHBRAIN_LOCAL_DOWNLOAD_STRATEGY", "copy")
+
 
 import numpy as np, torch
 from pathlib import Path
@@ -43,8 +45,8 @@ def main():
         _, _, _, spk, _, _ = ds[i]
         by_spk_idx.setdefault(spk, []).append(i)
     speakers = sorted(by_spk_idx.keys())[:20]         # ~20 spk
-    enc = EncoderClassifier.from_hparams("speechbrain/spkrec-ecapa-voxceleb",
-     savedir=str(ARTIFACTS / "ecapa-voxceleb"),                          
+    enc = EncoderClassifier.from_hparams(ART / "ecapa-voxceleb",
+     savedir=str(ART / "ecapa-voxceleb"),                          
      run_opts={"device":"cuda" if torch.cuda.is_available() else "cpu"})
     by_spk_vecs = {}
     for spk in speakers:
