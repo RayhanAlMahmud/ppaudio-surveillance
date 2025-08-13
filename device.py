@@ -1,3 +1,5 @@
+import os
+os.environ.setdefault("HF_HUB_OFFLINE", "1")  # always use local HF cache
 
 import json, numpy as np, librosa, torch, argparse
 from pathlib import Path
@@ -9,6 +11,7 @@ PROBES = BASE / "data" / "probes"
 
 encoder = EncoderClassifier.from_hparams(
     source="speechbrain/spkrec-ecapa-voxceleb",
+     savedir=str(ARTIFACTS / "ecapa-voxceleb"),
     run_opts={"device": "cuda" if torch.cuda.is_available() else "cpu"}
 )
 
