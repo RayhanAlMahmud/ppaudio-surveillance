@@ -1,0 +1,24 @@
+# Design Deviations vs. the Reference Paper
+
+## Embeddings
+- **Paper**: x-vectors (Kaldi/VGGVox).
+- **This repo**: **ECAPA** via SpeechBrain (stronger baseline, easy Python).
+
+## HE scheme
+- **Paper**: **ElGamal/ECC** (multiplicative HE) + additional protocol pieces.
+- **This repo**: **Paillier** (additive HE) with integer sign-based decision (argmin). Easier to prototype in Python.
+
+## PLDA integer scoring
+- **Paper**: quantized integer s′ with match ⇔ s′ < 0.
+- **This repo**: cosine integer mapping fully implemented; PLDA currently uses float scoring then integer map; fixed-point PLDA s′ snippet provided and easy to enable.
+
+## Server knowledge
+- **Paper**: can include ZK proofs to prevent cheating; reveals minimal info.
+- **This repo**: server reveals only permuted index of most negative; no ZK (future work).
+
+## Gallery location
+- **Paper variants**: gallery can be hidden from client.
+- **This repo**: gallery embeddings reside on the client (simpler engineering for coursework). Hiding gallery would require heavier crypto/SMP.
+
+## Runtimes/Platform
+- Windows-friendly: offline model load, no symlinks; Paillier keys persisted.

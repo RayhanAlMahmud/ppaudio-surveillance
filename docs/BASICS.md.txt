@@ -1,0 +1,16 @@
+# Basics: How this privacy-preserving speaker search works
+
+## TL;DR
+Device turns audio → embedding → per-suspect scores → integer map (negative=match) → encrypts & permutes → server decrypts and returns index of the most negative. Client maps index → suspect name.
+
+## Step 1: Embeddings
+We use ECAPA (SpeechBrain) to turn a few seconds of speech into a vector. It captures **voice identity**, not words. We L2-normalize the vector.
+
+## Step 2: Scoring
+- **Cosine**: angle similarity in the unit sphere (−1..1; higher is more similar).
+- **PLDA**: statistical score (log-likelihood ratio) in a transformed space.
+
+## Step 3: Integer mapping
+We convert each score to an integer where **negative ⇒ match**.
+
+Cosine example:
